@@ -140,7 +140,7 @@ const WheelCanvas = forwardRef<WheelCanvasMethods, WheelCanvasProps>(({ items, s
   }, [settings, items.length]);
 
   return (
-    <div className="w-full h-[400px] lg:h-[600px] max-w-[400px] lg:max-w-[600px] aspect-square relative">
+    <div className="w-full max-w-[400px] lg:max-w-[600px] aspect-square relative">
       <canvas ref={canvasRef} className="w-full h-full" />
     </div>
   );
