@@ -1,0 +1,150 @@
+'use client';
+
+import React, { useRef, useEffect, forwardRef, useImperativeHandle } from 'react';
+import type { WheelSettings } from '@/hooks/use-wheel-state';
+
+interface WheelCanvasProps {
+  items: string[];
+  settings: WheelSettings;
+  onSpinEnd: (winner: string) => void;
+}
+
+interface WheelCanvasMethods {
+  spin: () => void;
+}
+
+const colorPalettes: { [key: string]: string[] } = {
+  default: ['#41B6E6', '#4183E6', '#5DADE2', '#2E86C1', '#85C1E9', '#3498DB'],
+  vintage: ['#D4A276', '#BC986A', '#A18276', '#8D7E6F', '#6C584C', '#5A3F37'],
+  neon: ['#F94144', '#F3722C', '#F8961E', '#F9C74F', '#90BE6D', '#43AA8B', '#577590'],
+  pastel: ['#F7B2B7', '#F7D6B2', '#B2D6F7', '#B2F7D6', '#D6B2F7', '#F7F7B2'],
+};
+
+const easeOut = (t: number) => 1 - Math.pow(1 - t, 4);
+
+const WheelCanvas = forwardRef<WheelCanvasMethods, WheelCanvasProps>(({ items, settings, onSpinEnd }, ref) => {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const animationFrameId = useRef<number>();
+  const currentAngle = useRef(0);
+  const spinStartTime = useRef<number | null>(null);
+  const spinDuration = useRef(0);
+  const targetAngle = useRef(0);
+
+  const drawWheel = () => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    const { width, height } = canvas;
+    const radius = Math.min(width, height) / 2 - 20;
+    const centerX = width / 2;
+    const centerY = height / 2;
+    const sliceAngle = (2 * Math.PI) / items.length;
+    const colors = colorPalettes[settings.colorPalette] || colorPalettes.default;
+
+    ctx.clearRect(0, 0, width, height);
+    ctx.save();
+    ctx.translate(centerX, centerY);
+    ctx.rotate(currentAngle.current);
+
+    items.forEach((item, i) => {
+      const startAngle = i * sliceAngle;
+      const endAngle = startAngle + sliceAngle;
+
+      ctx.beginPath();
+      ctx.moveTo(0, 0);
+      ctx.arc(0, 0, radius, startAngle, endAngle);
+      ctx.closePath();
+      ctx.fillStyle = colors[i % colors.length];
+      ctx.fill();
+      ctx.strokeStyle = 'hsl(var(--card))';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
+      ctx.save();
+      ctx.rotate(startAngle + sliceAngle / 2);
+      ctx.textAlign = 'right';
+      ctx.fillStyle = '#ffffff';
+      ctx.font = 'bold 16px Poppins';
+      ctx.fillText(item.length > 20 ? item.substring(0, 17) + '...' : item, radius - 10, 5);
+      ctx.restore();
+    });
+
+    ctx.restore();
+    
+    // Draw pointer
+    ctx.beginPath();
+    ctx.moveTo(centerX + radius + 5, centerY);
+    ctx.lineTo(centerX + radius + 20, centerY - 10);
+    ctx.lineTo(centerX + radius + 20, centerY + 10);
+    ctx.closePath();
+    ctx.fillStyle = 'hsl(var(--primary))';
+    ctx.fill();
+  };
+
+  const animateSpin = (timestamp: number) => {
+    if (!spinStartTime.current) {
+      spinStartTime.current = timestamp;
+    }
+
+    const elapsed = timestamp - spinStartTime.current;
+    const progress = Math.min(elapsed / spinDuration.current, 1);
+    const easedProgress = easeOut(progress);
+
+    currentAngle.current = easedProgress * targetAngle.current;
+
+    drawWheel();
+
+    if (progress < 1) {
+      animationFrameId.current = requestAnimationFrame(animateSpin);
+    } else {
+      const fullRotations = Math.floor(currentAngle.current / (2 * Math.PI));
+      const finalAngle = currentAngle.current - fullRotations * (2 * Math.PI);
+      const sliceAngle = (2 * Math.PI) / items.length;
+      const winnerIndex = Math.floor(items.length - (finalAngle * items.length) / (2 * Math.PI)) % items.length;
+      onSpinEnd(items[winnerIndex]);
+    }
+  };
+
+  useImperativeHandle(ref, () => ({
+    spin: () => {
+      const minSpins = 5;
+      const randomExtra = Math.random();
+      targetAngle.current = (minSpins + randomExtra) * 2 * Math.PI;
+      spinDuration.current = settings.spinDuration * 1000;
+      spinStartTime.current = null;
+      if (animationFrameId.current) cancelAnimationFrame(animationFrameId.current);
+      animationFrameId.current = requestAnimationFrame(animateSpin);
+    },
+  }));
+
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const dpr = window.devicePixelRatio || 1;
+    const rect = canvas.parentElement!.getBoundingClientRect();
+    canvas.width = rect.width * dpr;
+    canvas.height = rect.height * dpr;
+    
+    const ctx = canvas.getContext('2d');
+    if (ctx) ctx.scale(dpr, dpr);
+
+    drawWheel();
+  }, [items, settings.colorPalette]);
+  
+  useEffect(() => {
+    // Redraw on settings change
+    drawWheel();
+  }, [settings, items.length]);
+
+  return (
+    <div className="w-full h-[400px] lg:h-[600px] max-w-[400px] lg:max-w-[600px] aspect-square relative">
+      <canvas ref={canvasRef} className="w-full h-full" />
+    </div>
+  );
+});
+
+WheelCanvas.displayName = 'WheelCanvas';
+export default WheelCanvas;
