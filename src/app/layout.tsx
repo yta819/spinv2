@@ -3,6 +3,8 @@ import Script from 'next/script';
 import './globals.css';
 import { Toaster } from "@/components/ui/toaster"
 import Header from '@/components/header';
+import Footer from '@/components/footer';
+import { version } from '../../package.json';
 
 export const metadata: Metadata = {
   title: 'Spin The Wheel',
@@ -26,6 +28,7 @@ export default function RootLayout({
         <main className="flex-1">
           {children}
         </main>
+        <Footer version={version} />
         <Toaster />
 
         {/* Googel site owner */}
