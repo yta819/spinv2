@@ -1,16 +1,16 @@
 'use client';
 
-import React, { useState, useRef, useCallback } from 'react';
+import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { useWheelState, type WheelSettings } from '@/hooks/use-wheel-state';
 import WheelCanvas from '@/components/wheel-canvas';
 import Controls from '@/components/controls';
 import WinnerDialog from '@/components/winner-dialog';
 import SuggestionsDialog from '@/components/suggestions-dialog';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
 import { Loader2 } from 'lucide-react';
 import { suggestListItems } from '@/ai/flows/suggest-list-items';
 import { useAudio } from '@/hooks/use-audio';
+import { useToast } from '@/hooks/use-toast';
 
 // Define the WheelCanvasMethods interface
 interface WheelCanvasMethods {
@@ -38,6 +38,9 @@ export default function Home() {
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [isSuggestionsLoading, setIsSuggestionsLoading] = useState(false);
   const [isSuggestionsDialogOpen, setIsSuggestionsDialogOpen] = useState(false);
+  
+  const [isFullScreen, setIsFullScreen] = useState(false);
+  const { toast } = useToast();
 
   const { initializeAudio, playTickSound, playWinnerSound } = useAudio();
 
@@ -95,6 +98,55 @@ export default function Home() {
     setIsSuggestionsDialogOpen(false);
   };
 
+  const handleToggleFullScreen = () => {
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen().catch((err) => {
+        alert(`Error attempting to enable full-screen mode: ${err.message} (${err.name})`);
+      });
+    } else {
+      if (document.exitFullscreen) {
+        document.exitFullscreen();
+      }
+    }
+  };
+
+  const handleShare = async () => {
+    const url = window.location.href;
+    const shareData = {
+      title: 'Spin The Wheel',
+      text: 'Check out this wheel I made!',
+      url: url,
+    };
+
+    try {
+      if (navigator.share) {
+        await navigator.share(shareData);
+      } else {
+        await navigator.clipboard.writeText(url);
+        toast({
+          title: "Link Copied!",
+          description: "The link to this wheel has been copied to your clipboard.",
+        });
+      }
+    } catch (error) {
+      console.error('Error sharing:', error);
+      toast({
+        variant: "destructive",
+        title: "Oops!",
+        description: "Could not share the wheel.",
+      });
+    }
+  };
+  
+  useEffect(() => {
+    const onFullScreenChange = () => {
+      setIsFullScreen(!!document.fullscreenElement);
+    };
+    document.addEventListener('fullscreenchange', onFullScreenChange);
+    return () => document.removeEventListener('fullscreenchange', onFullScreenChange);
+  }, []);
+
+
   return (
     <div className="flex w-full flex-1 flex-col md:flex-row bg-background text-foreground">
       <main className="w-full md:w-2/3 flex flex-col items-center justify-start p-4 md:p-8">
@@ -132,7 +184,10 @@ export default function Home() {
             onUndo={handleUndo}
             onGetSuggestions={handleGetSuggestions}
             isSuggestionsLoading={isSuggestionsLoading}
-            isUndoable={true} 
+            isUndoable={true}
+            onShare={handleShare}
+            onToggleFullScreen={handleToggleFullScreen}
+            isFullScreen={isFullScreen}
           />
         </div>
       </aside>
