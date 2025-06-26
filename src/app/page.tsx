@@ -1,3 +1,4 @@
+
 'use client';
 
 import React, { useState, useRef, useCallback, useEffect } from 'react';
@@ -7,7 +8,7 @@ import Controls from '@/components/controls';
 import WinnerDialog from '@/components/winner-dialog';
 import SuggestionsDialog from '@/components/suggestions-dialog';
 import { Button } from '@/components/ui/button';
-import { Loader2 } from 'lucide-react';
+import { Loader2, Maximize, Minimize, Share2 } from 'lucide-react';
 import { suggestListItems } from '@/ai/flows/suggest-list-items';
 import { useAudio } from '@/hooks/use-audio';
 import { useToast } from '@/hooks/use-toast';
@@ -163,6 +164,18 @@ export default function Home() {
     <div className="flex w-full flex-1 flex-col md:flex-row bg-background text-foreground">
       <main className="w-full md:w-2/3 flex flex-col items-center justify-start p-4 md:p-8">
         <div className="relative flex items-center justify-center w-full max-w-[400px] md:max-w-[600px] aspect-square">
+            <div className="absolute top-0 right-0 z-10 flex gap-2 p-2">
+              <Button onClick={handleShare} variant="outline" size="icon" aria-label="Share wheel">
+                <Share2 className="h-5 w-5" />
+              </Button>
+              <Button onClick={handleToggleFullScreen} variant="outline" size="icon" aria-label="Toggle fullscreen">
+                {isFullScreen ? (
+                  <Minimize className="h-5 w-5" />
+                ) : (
+                  <Maximize className="h-5 w-5" />
+                )}
+              </Button>
+            </div>
             <WheelCanvas
               ref={wheelRef}
               items={items}
@@ -197,9 +210,6 @@ export default function Home() {
             onGetSuggestions={handleGetSuggestions}
             isSuggestionsLoading={isSuggestionsLoading}
             isUndoable={true}
-            onShare={handleShare}
-            onToggleFullScreen={handleToggleFullScreen}
-            isFullScreen={isFullScreen}
           />
         </div>
       </aside>

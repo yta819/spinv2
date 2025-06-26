@@ -1,3 +1,4 @@
+
 'use client';
 
 import React from 'react';
@@ -7,7 +8,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Shuffle, Trash2, Undo, Wand2, Palette, Settings, Share2, Maximize, Minimize } from 'lucide-react';
+import { Shuffle, Trash2, Undo, Wand2, Palette, Settings } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
 
 interface ControlsProps {
@@ -21,9 +22,6 @@ interface ControlsProps {
   onGetSuggestions: () => void;
   isSuggestionsLoading: boolean;
   isUndoable: boolean;
-  onShare: () => void;
-  onToggleFullScreen: () => void;
-  isFullScreen: boolean;
 }
 
 const Controls: React.FC<ControlsProps> = ({
@@ -37,9 +35,6 @@ const Controls: React.FC<ControlsProps> = ({
   onGetSuggestions,
   isSuggestionsLoading,
   isUndoable,
-  onShare,
-  onToggleFullScreen,
-  isFullScreen,
 }) => {
   return (
     <div className="space-y-6">
@@ -68,17 +63,6 @@ const Controls: React.FC<ControlsProps> = ({
             </Button>
             <Button onClick={onGetSuggestions} disabled={isSuggestionsLoading} variant="secondary">
               <Wand2 className="mr-2 h-4 w-4" /> {isSuggestionsLoading ? 'Thinking...' : 'AI Suggest'}
-            </Button>
-            <Button onClick={onShare} variant="secondary">
-              <Share2 className="mr-2 h-4 w-4" /> Share
-            </Button>
-            <Button onClick={onToggleFullScreen} variant="secondary">
-              {isFullScreen ? (
-                <Minimize className="mr-2 h-4 w-4" />
-              ) : (
-                <Maximize className="mr-2 h-4 w-4" />
-              )}
-              {isFullScreen ? 'Exit' : 'Full Screen'}
             </Button>
           </div>
         </CardContent>
