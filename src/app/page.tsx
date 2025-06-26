@@ -10,6 +10,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Loader2 } from 'lucide-react';
 import { suggestListItems } from '@/ai/flows/suggest-list-items';
+import { useAudio } from '@/hooks/use-audio';
 
 // Define the WheelCanvasMethods interface
 interface WheelCanvasMethods {
@@ -38,8 +39,11 @@ export default function Home() {
   const [isSuggestionsLoading, setIsSuggestionsLoading] = useState(false);
   const [isSuggestionsDialogOpen, setIsSuggestionsDialogOpen] = useState(false);
 
+  const { initializeAudio, playTickSound, playWinnerSound } = useAudio();
+
   const handleSpin = () => {
     if (items.length > 1 && wheelRef.current) {
+      initializeAudio();
       setIsSpinning(true);
       setWinner(null);
       wheelRef.current.spin();
@@ -100,6 +104,7 @@ export default function Home() {
               items={items}
               onSpinEnd={onSpinEnd}
               settings={settings}
+              playTickSound={playTickSound}
             />
             <div className="absolute inset-0 flex items-center justify-center">
                 <Button
@@ -138,6 +143,8 @@ export default function Home() {
           isOpen={isWinnerDialogOpen}
           onContinue={handleContinue}
           onRemove={handleRemoveWinner}
+          soundEnabled={settings.soundEnabled}
+          playWinnerSound={playWinnerSound}
         />
       )}
 

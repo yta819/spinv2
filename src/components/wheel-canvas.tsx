@@ -7,6 +7,7 @@ interface WheelCanvasProps {
   items: string[];
   settings: WheelSettings;
   onSpinEnd: (winner: string) => void;
+  playTickSound: () => void;
 }
 
 interface WheelCanvasMethods {
@@ -22,10 +23,11 @@ const colorPalettes: { [key: string]: string[] } = {
 
 const easeOut = (t: number) => 1 - Math.pow(1 - t, 4);
 
-const WheelCanvas = forwardRef<WheelCanvasMethods, WheelCanvasProps>(({ items, settings, onSpinEnd }, ref) => {
+const WheelCanvas = forwardRef<WheelCanvasMethods, WheelCanvasProps>(({ items, settings, onSpinEnd, playTickSound }, ref) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const animationFrameId = useRef<number>();
   const currentAngle = useRef(0);
+  const lastAngle = useRef(0);
   const spinStartTime = useRef<number | null>(null);
   const spinDuration = useRef(0);
   const targetAngle = useRef(0);
@@ -96,7 +98,20 @@ const WheelCanvas = forwardRef<WheelCanvasMethods, WheelCanvasProps>(({ items, s
     const progress = Math.min(elapsed / spinDuration.current, 1);
     const easedProgress = easeOut(progress);
 
+    const oldAngle = lastAngle.current;
     currentAngle.current = easedProgress * targetAngle.current;
+    lastAngle.current = currentAngle.current;
+
+    if (settings.soundEnabled) {
+      const sliceAngle = items.length > 0 ? (2 * Math.PI) / items.length : 0;
+      if (sliceAngle > 0) {
+        const oldSliceIndex = Math.floor(oldAngle / sliceAngle);
+        const newSliceIndex = Math.floor(currentAngle.current / sliceAngle);
+        if (newSliceIndex > oldSliceIndex) {
+          playTickSound();
+        }
+      }
+    }
 
     drawWheel();
 
@@ -110,7 +125,7 @@ const WheelCanvas = forwardRef<WheelCanvasMethods, WheelCanvasProps>(({ items, s
         onSpinEnd(items[winnerIndex]);
       }
     }
-  }, [drawWheel, items, onSpinEnd]);
+  }, [drawWheel, items, onSpinEnd, settings.soundEnabled, playTickSound]);
 
   useImperativeHandle(ref, () => ({
     spin: () => {
@@ -119,6 +134,7 @@ const WheelCanvas = forwardRef<WheelCanvasMethods, WheelCanvasProps>(({ items, s
       targetAngle.current = (minSpins + randomExtra) * 2 * Math.PI;
       spinDuration.current = settings.spinDuration * 1000;
       spinStartTime.current = null;
+      lastAngle.current = 0;
       if (animationFrameId.current) cancelAnimationFrame(animationFrameId.current);
       animationFrameId.current = requestAnimationFrame(animateSpin);
     },

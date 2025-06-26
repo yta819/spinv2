@@ -16,12 +16,17 @@ interface WinnerDialogProps {
   isOpen: boolean;
   onContinue: () => void;
   onRemove: () => void;
+  soundEnabled: boolean;
+  playWinnerSound: () => void;
 }
 
-const WinnerDialog: React.FC<WinnerDialogProps> = ({ winner, isOpen, onContinue, onRemove }) => {
+const WinnerDialog: React.FC<WinnerDialogProps> = ({ winner, isOpen, onContinue, onRemove, soundEnabled, playWinnerSound }) => {
   useEffect(() => {
     // Basic confetti effect
     if (isOpen) {
+      if (soundEnabled) {
+        playWinnerSound();
+      }
       const confettiCount = 100;
       const confettiContainer = document.body;
       for (let i = 0; i < confettiCount; i++) {
@@ -36,7 +41,7 @@ const WinnerDialog: React.FC<WinnerDialogProps> = ({ winner, isOpen, onContinue,
         setTimeout(() => confetti.remove(), 5000);
       }
     }
-  }, [isOpen]);
+  }, [isOpen, soundEnabled, playWinnerSound]);
 
   if (!isOpen) return null;
 
@@ -72,7 +77,7 @@ const WinnerDialog: React.FC<WinnerDialogProps> = ({ winner, isOpen, onContinue,
           <AlertDialogFooter className="sm:justify-center gap-2">
             <Button onClick={onRemove}>Remove Winner</Button>
             <Button variant="outline" onClick={onContinue}>
-              Continue
+              Awesome!
             </Button>
           </AlertDialogFooter>
         </AlertDialogContent>
