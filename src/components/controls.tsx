@@ -74,15 +74,6 @@ const Controls: React.FC<ControlsProps> = ({
         </CardHeader>
         <CardContent className="space-y-4">
             <div className="flex items-center justify-between">
-              <Label htmlFor="remove-winner">Remove winner after spin</Label>
-              <Switch
-                id="remove-winner"
-                checked={settings.removeWinner}
-                onCheckedChange={(checked) => onSettingsChange({ removeWinner: checked })}
-              />
-            </div>
-
-            <div className="flex items-center justify-between">
                 <Label htmlFor="sound-enabled">Sound effects</Label>
                 <Switch
                   id="sound-enabled"

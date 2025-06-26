@@ -5,14 +5,12 @@ import { useSearchParams, useRouter, usePathname } from 'next/navigation';
 
 export interface WheelSettings {
   spinDuration: number;
-  removeWinner: boolean;
   soundEnabled: boolean;
   colorPalette: string;
 }
 
 const defaultSettings: WheelSettings = {
   spinDuration: 5,
-  removeWinner: false,
   soundEnabled: true,
   colorPalette: 'default',
 };

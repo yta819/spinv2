@@ -52,12 +52,16 @@ export default function Home() {
     setIsWinnerDialogOpen(true);
   }, []);
 
-  const closeWinnerDialog = () => {
+  const handleContinue = () => {
     setIsWinnerDialogOpen(false);
-    if (settings.removeWinner && winner) {
+    setWinner(null);
+  };
+
+  const handleRemoveWinner = () => {
+    if (winner) {
       handleWinnerRemoved(winner);
     }
-    setWinner(null);
+    handleContinue();
   };
   
   const handleGetSuggestions = async () => {
@@ -132,7 +136,8 @@ export default function Home() {
         <WinnerDialog
           winner={winner}
           isOpen={isWinnerDialogOpen}
-          onClose={closeWinnerDialog}
+          onContinue={handleContinue}
+          onRemove={handleRemoveWinner}
         />
       )}
 

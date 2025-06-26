@@ -3,22 +3,22 @@
 import React, { useEffect } from 'react';
 import {
   AlertDialog,
-  AlertDialogAction,
   AlertDialogContent,
   AlertDialogDescription,
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
-import { Award } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 interface WinnerDialogProps {
   winner: string;
   isOpen: boolean;
-  onClose: () => void;
+  onContinue: () => void;
+  onRemove: () => void;
 }
 
-const WinnerDialog: React.FC<WinnerDialogProps> = ({ winner, isOpen, onClose }) => {
+const WinnerDialog: React.FC<WinnerDialogProps> = ({ winner, isOpen, onContinue, onRemove }) => {
   useEffect(() => {
     // Basic confetti effect
     if (isOpen) {
@@ -59,21 +59,21 @@ const WinnerDialog: React.FC<WinnerDialogProps> = ({ winner, isOpen, onClose }) 
           }
         }
       `}</style>
-      <AlertDialog open={isOpen} onOpenChange={onClose}>
+      <AlertDialog open={isOpen} onOpenChange={onContinue}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle className="flex flex-col items-center justify-center text-center text-2xl">
-              <Award className="h-16 w-16 text-yellow-500 mb-4" />
-              The winner is...
+            <AlertDialogTitle className="text-center text-2xl font-bold">
+              We have a winner!
             </AlertDialogTitle>
             <AlertDialogDescription className="text-center text-4xl font-bold font-headline text-primary py-4">
               {winner}
             </AlertDialogDescription>
           </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogAction onClick={onClose} className="w-full">
-              Awesome!
-            </AlertDialogAction>
+          <AlertDialogFooter className="sm:justify-center gap-2">
+            <Button onClick={onRemove}>Remove Winner</Button>
+            <Button variant="outline" onClick={onContinue}>
+              Continue
+            </Button>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
