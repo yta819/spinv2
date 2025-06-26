@@ -118,22 +118,34 @@ export default function Home() {
       url: url,
     };
 
-    try {
-      if (navigator.share) {
+    // Use Web Share API if available
+    if (navigator.share) {
+      try {
         await navigator.share(shareData);
-      } else {
-        await navigator.clipboard.writeText(url);
-        toast({
-          title: "Link Copied!",
-          description: "The link to this wheel has been copied to your clipboard.",
-        });
+        // If share is successful, we're done.
+        return;
+      } catch (error) {
+        // Ignore AbortError which is thrown when the user cancels the share dialog.
+        if (error instanceof DOMException && error.name === 'AbortError') {
+          return;
+        }
+        console.error('Web Share API failed, falling back to clipboard.', error);
       }
+    }
+    
+    // Fallback to clipboard for browsers without Web Share API or if it fails
+    try {
+      await navigator.clipboard.writeText(url);
+      toast({
+        title: "Link Copied!",
+        description: "The link to this wheel has been copied to your clipboard.",
+      });
     } catch (error) {
-      console.error('Error sharing:', error);
+      console.error('Error copying to clipboard:', error);
       toast({
         variant: "destructive",
         title: "Oops!",
-        description: "Could not share the wheel.",
+        description: "Could not copy the wheel link.",
       });
     }
   };
