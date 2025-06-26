@@ -88,28 +88,30 @@ export default function Home() {
   };
 
   return (
-    <div className="flex min-h-svh w-full flex-col lg:flex-row bg-background text-foreground">
-      <main className="flex-1 flex flex-col items-center justify-center p-4 lg:p-8">
-        <div className="relative flex items-center justify-center">
+    <div className="flex min-h-svh w-full flex-col md:flex-row bg-background text-foreground">
+      <main className="flex-1 flex flex-col items-center justify-center p-4 md:p-8">
+        <div className="relative flex items-center justify-center w-full max-w-[400px] md:max-w-[600px] aspect-square">
             <WheelCanvas
               ref={wheelRef}
               items={items}
               onSpinEnd={onSpinEnd}
               settings={settings}
             />
-            <Button
-              onClick={handleSpin}
-              disabled={isSpinning || items.length < 2}
-              className="absolute text-2xl font-bold rounded-full px-12 py-8 shadow-lg transition-transform transform hover:scale-105"
-              size="lg"
-            >
-              {isSpinning ? <Loader2 className="mr-2 h-8 w-8 animate-spin" /> : null}
-              {isSpinning ? 'Spinning...' : 'SPIN!'}
-            </Button>
+            <div className="absolute inset-0 flex items-center justify-center">
+                <Button
+                  onClick={handleSpin}
+                  disabled={isSpinning || items.length < 2}
+                  className="text-2xl font-bold rounded-full h-32 w-32 shadow-lg transition-transform transform hover:scale-105"
+                  size="lg"
+                >
+                  {isSpinning ? <Loader2 className="h-8 w-8 animate-spin" /> : null}
+                  {isSpinning ? '' : 'SPIN!'}
+                </Button>
+            </div>
         </div>
       </main>
       
-      <aside className="w-full lg:w-[380px] lg:h-full bg-card text-card-foreground lg:border-l border-t lg:border-t-0 p-4 lg:p-6 flex flex-col">
+      <aside className="w-full md:w-[380px] bg-card text-card-foreground md:border-l border-t md:border-t-0 p-4 md:p-6 flex flex-col">
         <div className="flex-1 overflow-y-auto">
           <Controls
             text={text}
