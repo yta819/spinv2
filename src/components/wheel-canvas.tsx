@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useRef, useEffect, forwardRef, useImperativeHandle } from 'react';
+import React, { useRef, useEffect, forwardRef, useImperativeHandle, useCallback } from 'react';
 import type { WheelSettings } from '@/hooks/use-wheel-state';
 
 interface WheelCanvasProps {
@@ -30,20 +30,24 @@ const WheelCanvas = forwardRef<WheelCanvasMethods, WheelCanvasProps>(({ items, s
   const spinDuration = useRef(0);
   const targetAngle = useRef(0);
 
-  const drawWheel = () => {
+  const drawWheel = useCallback(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
+    
+    // Get logical dimensions for drawing from the canvas element's bounding box
+    const { width, height } = canvas.getBoundingClientRect();
 
-    const { width, height } = canvas;
     const radius = Math.min(width, height) / 2 - 20;
     const centerX = width / 2;
     const centerY = height / 2;
-    const sliceAngle = (2 * Math.PI) / items.length;
+    const sliceAngle = items.length > 0 ? (2 * Math.PI) / items.length : 2 * Math.PI;
     const colors = colorPalettes[settings.colorPalette] || colorPalettes.default;
 
+    // Clear the canvas using logical dimensions (context is scaled)
     ctx.clearRect(0, 0, width, height);
+    
     ctx.save();
     ctx.translate(centerX, centerY);
     ctx.rotate(currentAngle.current);
@@ -81,9 +85,9 @@ const WheelCanvas = forwardRef<WheelCanvasMethods, WheelCanvasProps>(({ items, s
     ctx.closePath();
     ctx.fillStyle = 'hsl(var(--primary))';
     ctx.fill();
-  };
+  }, [items, settings.colorPalette]);
 
-  const animateSpin = (timestamp: number) => {
+  const animateSpin = useCallback((timestamp: number) => {
     if (!spinStartTime.current) {
       spinStartTime.current = timestamp;
     }
@@ -99,13 +103,14 @@ const WheelCanvas = forwardRef<WheelCanvasMethods, WheelCanvasProps>(({ items, s
     if (progress < 1) {
       animationFrameId.current = requestAnimationFrame(animateSpin);
     } else {
-      const fullRotations = Math.floor(currentAngle.current / (2 * Math.PI));
-      const finalAngle = currentAngle.current - fullRotations * (2 * Math.PI);
-      const sliceAngle = (2 * Math.PI) / items.length;
-      const winnerIndex = Math.floor(items.length - (finalAngle * items.length) / (2 * Math.PI)) % items.length;
-      onSpinEnd(items[winnerIndex]);
+      if (items.length > 0) {
+        const fullRotations = Math.floor(currentAngle.current / (2 * Math.PI));
+        const finalAngle = currentAngle.current - fullRotations * (2 * Math.PI);
+        const winnerIndex = Math.floor(items.length - (finalAngle * items.length) / (2 * Math.PI)) % items.length;
+        onSpinEnd(items[winnerIndex]);
+      }
     }
-  };
+  }, [drawWheel, items, onSpinEnd]);
 
   useImperativeHandle(ref, () => ({
     spin: () => {
@@ -121,26 +126,29 @@ const WheelCanvas = forwardRef<WheelCanvasMethods, WheelCanvasProps>(({ items, s
 
   useEffect(() => {
     const canvas = canvasRef.current;
-    if (!canvas) return;
+    if (!canvas || !canvas.parentElement) return;
 
-    const dpr = window.devicePixelRatio || 1;
-    const rect = canvas.parentElement!.getBoundingClientRect();
-    canvas.width = rect.width * dpr;
-    canvas.height = rect.height * dpr;
-    
-    const ctx = canvas.getContext('2d');
-    if (ctx) ctx.scale(dpr, dpr);
+    const resizeObserver = new ResizeObserver(() => {
+        const dpr = window.devicePixelRatio || 1;
+        const rect = canvas.parentElement!.getBoundingClientRect();
+        
+        canvas.width = rect.width * dpr;
+        canvas.height = rect.height * dpr;
 
-    drawWheel();
-  }, [items, settings.colorPalette]);
-  
-  useEffect(() => {
-    // Redraw on settings change
-    drawWheel();
-  }, [settings, items.length]);
+        const ctx = canvas.getContext('2d');
+        if (ctx) {
+            ctx.scale(dpr, dpr);
+        }
+        drawWheel();
+    });
+
+    resizeObserver.observe(canvas.parentElement);
+    return () => resizeObserver.disconnect();
+  }, [drawWheel]);
+
 
   return (
-    <div className="w-full max-w-[400px] lg:max-w-[600px] aspect-square relative">
+    <div className="w-full max-w-[400px] lg:max-w-[600px] aspect-square">
       <canvas ref={canvasRef} className="w-full h-full" />
     </div>
   );

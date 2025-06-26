@@ -89,22 +89,24 @@ export default function Home() {
 
   return (
     <div className="flex min-h-svh w-full flex-col lg:flex-row bg-background text-foreground">
-      <main className="flex-1 flex flex-col items-center justify-center p-4 lg:p-8 relative">
-        <WheelCanvas
-          ref={wheelRef}
-          items={items}
-          onSpinEnd={onSpinEnd}
-          settings={settings}
-        />
-        <Button
-          onClick={handleSpin}
-          disabled={isSpinning || items.length < 2}
-          className="absolute bottom-8 lg:bottom-16 text-2xl font-bold rounded-full px-12 py-8 shadow-lg transition-transform transform hover:scale-105"
-          size="lg"
-        >
-          {isSpinning ? <Loader2 className="mr-2 h-8 w-8 animate-spin" /> : null}
-          {isSpinning ? 'Spinning...' : 'SPIN!'}
-        </Button>
+      <main className="flex-1 flex flex-col items-center justify-center p-4 lg:p-8">
+        <div className="relative flex items-center justify-center">
+            <WheelCanvas
+              ref={wheelRef}
+              items={items}
+              onSpinEnd={onSpinEnd}
+              settings={settings}
+            />
+            <Button
+              onClick={handleSpin}
+              disabled={isSpinning || items.length < 2}
+              className="absolute text-2xl font-bold rounded-full px-12 py-8 shadow-lg transition-transform transform hover:scale-105"
+              size="lg"
+            >
+              {isSpinning ? <Loader2 className="mr-2 h-8 w-8 animate-spin" /> : null}
+              {isSpinning ? 'Spinning...' : 'SPIN!'}
+            </Button>
+        </div>
       </main>
       
       <aside className="w-full lg:w-[380px] lg:h-full bg-card text-card-foreground lg:border-l border-t lg:border-t-0 p-4 lg:p-6 flex flex-col">
