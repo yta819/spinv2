@@ -1,17 +1,23 @@
+import type { Metadata } from 'next';
 import {
     Accordion,
     AccordionContent,
     AccordionItem,
     AccordionTrigger,
 } from "@/components/ui/accordion"
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardDescription } from "@/components/ui/card";
+
+export const metadata: Metadata = {
+  title: 'Frequently Asked Questions | Spin The Wheel',
+  description: 'Find answers to common questions about the Spin The Wheel app, including saving lists, item limits, and how the AI suggestions work.',
+};
 
 export default function FaqPage() {
     return (
         <div className="container mx-auto max-w-4xl py-8 md:py-12">
             <Card>
                 <CardHeader>
-                    <CardTitle className="text-3xl font-bold tracking-tight">Frequently Asked Questions</CardTitle>
+                    <h1 className="text-3xl font-bold tracking-tight">Frequently Asked Questions</h1>
                     <CardDescription>
                         Have questions? We've got answers.
                     </CardDescription>

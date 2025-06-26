@@ -1,12 +1,18 @@
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import type { Metadata } from 'next';
+import { Card, CardContent, CardHeader, CardDescription } from "@/components/ui/card";
 import { ListChecks, Palette, Cog, PlayCircle, Trophy } from "lucide-react";
+
+export const metadata: Metadata = {
+  title: 'How to Use Spin The Wheel',
+  description: 'A step-by-step guide on how to add items, customize settings, and spin the wheel to get your random winner.',
+};
 
 export default function HowToSpinPage() {
   return (
     <div className="container mx-auto max-w-4xl py-8 md:py-12">
       <Card>
         <CardHeader>
-          <CardTitle className="text-3xl font-bold tracking-tight">How to Use Spin The Wheel</CardTitle>
+          <h1 className="text-3xl font-bold tracking-tight">How to Use Spin The Wheel</h1>
           <CardDescription>A quick guide to get your wheel spinning.</CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
