@@ -6,7 +6,7 @@ export default function HowToSpinPage() {
     <div className="container mx-auto max-w-4xl py-8 md:py-12">
       <Card>
         <CardHeader>
-          <CardTitle className="text-3xl font-bold tracking-tight">How to Use WheelVerse</CardTitle>
+          <CardTitle className="text-3xl font-bold tracking-tight">How to Use Spin The Wheel</CardTitle>
           <CardDescription>A quick guide to get your wheel spinning.</CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">

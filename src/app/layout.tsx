@@ -4,7 +4,7 @@ import { Toaster } from "@/components/ui/toaster"
 import Header from '@/components/header';
 
 export const metadata: Metadata = {
-  title: 'WheelVerse',
+  title: 'Spin The Wheel',
   description: 'A spinning wheel app to make decisions fun.',
 };
 

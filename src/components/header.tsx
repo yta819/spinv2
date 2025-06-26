@@ -22,7 +22,7 @@ export default function Header() {
             <path d="M12 2a10 10 0 0 1 10 10" />
             <path d="m22 12-4-4" />
           </svg>
-          <span className="text-lg font-bold">WheelVerse</span>
+          <span className="text-lg font-bold">Spin The Wheel</span>
         </Link>
         <nav className="flex items-center gap-4">
           <Button variant="ghost" asChild>

@@ -45,7 +45,7 @@ export default function FaqPage() {
                          <AccordionItem value="item-5">
                             <AccordionTrigger>Can I use this on my phone?</AccordionTrigger>
                             <AccordionContent>
-                                Absolutely! WheelVerse is designed to be fully responsive and works great on desktops, tablets, and mobile phones. The layout will adapt to fit your screen size.
+                                Absolutely! Spin The Wheel is designed to be fully responsive and works great on desktops, tablets, and mobile phones. The layout will adapt to fit your screen size.
                             </AccordionContent>
                         </AccordionItem>
                     </Accordion>
