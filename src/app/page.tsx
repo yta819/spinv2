@@ -88,8 +88,8 @@ export default function Home() {
   };
 
   return (
-    <div className="flex min-h-svh w-full flex-col md:flex-row bg-background text-foreground">
-      <main className="w-full md:w-2/3 flex flex-col items-center p-4 md:p-8">
+    <div className="flex w-full flex-1 flex-col md:flex-row bg-background text-foreground">
+      <main className="w-full md:w-2/3 flex flex-col items-center justify-start p-4 md:p-8">
         <div className="relative flex items-center justify-center w-full max-w-[400px] md:max-w-[600px] aspect-square">
             <WheelCanvas
               ref={wheelRef}
