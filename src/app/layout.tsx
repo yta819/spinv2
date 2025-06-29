@@ -22,6 +22,7 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&family=PT+Sans:wght@400;700&display=swap" rel="stylesheet" />
+        <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3309538140632443" crossOrigin="anonymous"></script>
       </head>
       <body className="font-body antialiased flex flex-col min-h-svh">
         <Header />
@@ -30,14 +31,6 @@ export default function RootLayout({
         </main>
         <Footer version={version} />
         <Toaster />
-
-        {/* Googel site owner */}
-        <Script
-          async
-          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3309538140632443"
-          crossOrigin="anonymous"
-          strategy="afterInteractive"
-        />
 
         {/* Google tag (gtag.js) */}
         <Script
