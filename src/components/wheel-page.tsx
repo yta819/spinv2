@@ -12,6 +12,7 @@ import { Loader2, Maximize, Minimize, Share2 } from 'lucide-react';
 import { suggestListItems } from '@/ai/flows/suggest-list-items';
 import { useAudio } from '@/hooks/use-audio';
 import { useToast } from '@/hooks/use-toast';
+import ActivityStats from '@/components/activity-stats';
 
 // Define the WheelCanvasMethods interface
 interface WheelCanvasMethods {
@@ -194,6 +195,9 @@ export default function WheelPage() {
                   {isSpinning ? '' : 'SPIN!'}
                 </Button>
             </div>
+        </div>
+        <div className="w-full max-w-[400px] md:max-w-[600px]">
+          <ActivityStats />
         </div>
       </main>
       
