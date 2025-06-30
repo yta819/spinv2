@@ -45,6 +45,14 @@ export default function WheelPage() {
   const { toast } = useToast();
 
   const { initializeAudio, playTickSound, playWinnerSound } = useAudio();
+  const [activityStats, setActivityStats] = useState({ wheelSpins: 0, spinningSeconds: 0 });
+
+  useEffect(() => {
+    // This effect runs once on mount to load stats from localStorage
+    const savedSpins = parseInt(localStorage.getItem('wheelSpins') || '0', 10);
+    const savedSeconds = parseInt(localStorage.getItem('spinningSeconds') || '0', 10);
+    setActivityStats({ wheelSpins: savedSpins, spinningSeconds: savedSeconds });
+  }, []);
 
   const handleSpin = () => {
     if (items.length > 1 && wheelRef.current) {
@@ -59,7 +67,19 @@ export default function WheelPage() {
     setWinner(newWinner);
     setIsSpinning(false);
     setIsWinnerDialogOpen(true);
-  }, []);
+    
+    // Update stats in localStorage and state
+    const currentSpins = parseInt(localStorage.getItem('wheelSpins') || '0', 10);
+    const currentSeconds = parseInt(localStorage.getItem('spinningSeconds') || '0', 10);
+
+    const newSpinCount = currentSpins + 1;
+    const newSpinningSeconds = currentSeconds + settings.spinDuration;
+
+    localStorage.setItem('wheelSpins', String(newSpinCount));
+    localStorage.setItem('spinningSeconds', String(newSpinningSeconds));
+
+    setActivityStats({ wheelSpins: newSpinCount, spinningSeconds: newSpinningSeconds });
+  }, [settings.spinDuration]);
 
   const handleContinue = () => {
     setIsWinnerDialogOpen(false);
@@ -197,7 +217,10 @@ export default function WheelPage() {
             </div>
         </div>
         <div className="w-full max-w-[400px] md:max-w-[600px]">
-          <ActivityStats />
+          <ActivityStats 
+            wheelSpins={activityStats.wheelSpins}
+            spinningSeconds={activityStats.spinningSeconds}
+          />
         </div>
       </main>
       

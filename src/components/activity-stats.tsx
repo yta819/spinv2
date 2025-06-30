@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
-const AnimatedNumber = ({ value }: { value: number }) => {
+const AnimatedNumber = ({ value, fractionDigits = 0 }: { value: number; fractionDigits?: number }) => {
     const [displayValue, setDisplayValue] = useState(0);
 
     useEffect(() => {
@@ -13,14 +13,14 @@ const AnimatedNumber = ({ value }: { value: number }) => {
         }
 
         let startTimestamp: number | null = null;
-        const duration = 2000;
+        const duration = 1500; // slightly faster animation
         
         const animationFrame = (timestamp: number) => {
             if (!startTimestamp) startTimestamp = timestamp;
             const progress = Math.min((timestamp - startTimestamp) / duration, 1);
             const easedProgress = 1 - Math.pow(1 - progress, 4); // easeOutQuart
             
-            const nextValue = Math.floor(easedProgress * value);
+            const nextValue = easedProgress * value;
             setDisplayValue(nextValue);
 
             if (progress < 1) {
@@ -32,44 +32,24 @@ const AnimatedNumber = ({ value }: { value: number }) => {
 
         const handle = requestAnimationFrame(animationFrame);
         return () => cancelAnimationFrame(handle);
-    }, [value]);
+    }, [value, fractionDigits]);
 
-    return <>{displayValue.toLocaleString('en-US')}</>;
+    return <>{displayValue.toLocaleString('en-US', { minimumFractionDigits: fractionDigits, maximumFractionDigits: fractionDigits })}</>;
 };
 
-const ActivityStats = () => {
-    const [stats, setStats] = useState({ wheelSpins: 0, spinningHours: 0 });
+interface ActivityStatsProps {
+    wheelSpins: number;
+    spinningSeconds: number;
+}
+
+const ActivityStats = ({ wheelSpins, spinningSeconds }: ActivityStatsProps) => {
     const [currentYear, setCurrentYear] = useState<number | null>(null);
 
     useEffect(() => {
-        // Since I can't connect to a real database, this function generates numbers
-        // that increase over time to simulate live, "actual" data.
-        const calculateStats = () => {
-            const launchDate = new Date('2024-01-01T00:00:00Z');
-            const now = new Date();
-            const daysSinceLaunch = (now.getTime() - launchDate.getTime()) / (1000 * 60 * 60 * 24);
-
-            // Base numbers + daily growth to ensure large, impressive numbers
-            const baseSpins = 500000000;
-            const spinsPerDay = 1500000;
-            
-            const baseHours = 2000000;
-            const hoursPerDay = 5000;
-
-            const wheelSpins = Math.floor(baseSpins + daysSinceLaunch * spinsPerDay);
-            const spinningHours = Math.floor(baseHours + daysSinceLaunch * hoursPerDay);
-            
-            setStats({ wheelSpins, spinningHours });
-            setCurrentYear(now.getFullYear());
-        };
-        
-        calculateStats();
-
-        // Optional: update stats periodically to make it feel more "live"
-        const interval = setInterval(calculateStats, 60000); // update every minute
-        return () => clearInterval(interval);
-
+        setCurrentYear(new Date().getFullYear());
     }, []);
+
+    const spinningHours = spinningSeconds / 3600;
 
     return (
         <Card className="w-full mt-8">
@@ -82,20 +62,20 @@ const ActivityStats = () => {
                         <path d="M2 12 A 10 10 0 0 1 12 2" stroke="#FBBC05" strokeWidth="2.5" strokeLinecap="round" />
                         <circle cx="12" cy="12" r="3" fill="hsl(var(--primary))"/>
                     </svg>
-                    <span>Activity in {currentYear || '2025'}</span>
+                    <span>Your Activity in {currentYear || new Date().getFullYear()}</span>
                 </CardTitle>
             </CardHeader>
             <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="p-4 rounded-lg bg-muted/50">
                     <p className="text-sm text-muted-foreground text-center">Wheel spins</p>
                     <p className="text-4xl lg:text-5xl font-bold text-chart-2 tracking-tight text-center">
-                        <AnimatedNumber value={stats.wheelSpins} />
+                        <AnimatedNumber value={wheelSpins} />
                     </p>
                 </div>
                 <div className="p-4 rounded-lg bg-muted/50">
                     <p className="text-sm text-muted-foreground text-center">Hours of spinning</p>
                     <p className="text-4xl lg:text-5xl font-bold text-chart-2 tracking-tight text-center">
-                        <AnimatedNumber value={stats.spinningHours} />
+                        <AnimatedNumber value={spinningHours} fractionDigits={2} />
                     </p>
                 </div>
             </CardContent>
