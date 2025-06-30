@@ -15,7 +15,7 @@ interface WheelCanvasMethods {
 }
 
 const colorPalettes: { [key: string]: string[] } = {
-  default: ['#41B6E6', '#4183E6', '#5DADE2', '#2E86C1', '#85C1E9', '#3498DB'],
+  default: ['#34A853', '#FBBC05', '#EA4335', '#4285F4'],
   vintage: ['#D4A276', '#BC986A', '#A18276', '#8D7E6F', '#6C584C', '#5A3F37'],
   neon: ['#F94144', '#F3722C', '#F8961E', '#F9C74F', '#90BE6D', '#43AA8B', '#577590'],
   pastel: ['#F7B2B7', '#F7D6B2', '#B2D6F7', '#B2F7D6', '#D6B2F7', '#F7F7B2'],
