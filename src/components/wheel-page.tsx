@@ -10,6 +10,7 @@ import SuggestionsDialog from '@/components/suggestions-dialog';
 import { Button } from '@/components/ui/button';
 import { Loader2, Maximize, Minimize, Share2 } from 'lucide-react';
 import { suggestListItems } from '@/ai/flows/suggest-list-items';
+import { generateStory } from '@/ai/flows/generate-story-flow';
 import { useAudio } from '@/hooks/use-audio';
 import { useToast } from '@/hooks/use-toast';
 import ActivityStats from '@/components/activity-stats';
@@ -104,6 +105,11 @@ export default function WheelPage() {
       setIsSuggestionsDialogOpen(true);
     } catch (error) {
       console.error('Failed to get suggestions:', error);
+      toast({
+        variant: "destructive",
+        title: "AI Suggestion Failed",
+        description: "Could not get suggestions at this time. Please try again later.",
+      });
     } finally {
       setIsSuggestionsLoading(false);
     }
@@ -140,14 +146,11 @@ export default function WheelPage() {
       url: url,
     };
 
-    // Use Web Share API if available
     if (navigator.share) {
       try {
         await navigator.share(shareData);
-        // If share is successful, we're done.
         return;
       } catch (error) {
-        // Ignore AbortError which is thrown when the user cancels the share dialog.
         if (error instanceof DOMException && error.name === 'AbortError') {
           return;
         }
@@ -155,7 +158,6 @@ export default function WheelPage() {
       }
     }
     
-    // Fallback to clipboard for browsers without Web Share API or if it fails
     try {
       await navigator.clipboard.writeText(url);
       toast({
@@ -169,6 +171,25 @@ export default function WheelPage() {
         title: "Oops!",
         description: "Could not copy the wheel link.",
       });
+    }
+  };
+
+  const handleGenerateStory = async () => {
+    if (!winner) return '';
+    try {
+      const result = await generateStory({
+        winner,
+        contextItems: items.filter(item => item !== winner),
+      });
+      return result.story;
+    } catch (error) {
+      console.error('Failed to generate story:', error);
+      toast({
+        variant: "destructive",
+        title: "AI Story Failed",
+        description: "The muse is asleep. Couldn't generate a story this time.",
+      });
+      return "The story is yet to be written... but the victory is real!";
     }
   };
   
@@ -247,6 +268,7 @@ export default function WheelPage() {
           isOpen={isWinnerDialogOpen}
           onContinue={handleContinue}
           onRemove={handleRemoveWinner}
+          onGenerateStory={handleGenerateStory}
           soundEnabled={settings.soundEnabled}
           playWinnerSound={playWinnerSound}
         />

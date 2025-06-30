@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   AlertDialog,
   AlertDialogContent,
@@ -10,23 +10,31 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
+import { Loader2, Sparkles } from 'lucide-react';
 
 interface WinnerDialogProps {
   winner: string;
   isOpen: boolean;
   onContinue: () => void;
   onRemove: () => void;
+  onGenerateStory: () => Promise<string>;
   soundEnabled: boolean;
   playWinnerSound: () => void;
 }
 
-const WinnerDialog: React.FC<WinnerDialogProps> = ({ winner, isOpen, onContinue, onRemove, soundEnabled, playWinnerSound }) => {
+const WinnerDialog: React.FC<WinnerDialogProps> = ({ winner, isOpen, onContinue, onRemove, onGenerateStory, soundEnabled, playWinnerSound }) => {
+  const [story, setStory] = useState<string>('');
+  const [isStoryLoading, setIsStoryLoading] = useState(false);
+
   useEffect(() => {
-    // Basic confetti effect
     if (isOpen) {
       if (soundEnabled) {
         playWinnerSound();
       }
+      // Reset story state when dialog opens
+      setStory('');
+      setIsStoryLoading(false);
+
       const confettiCount = 100;
       const confettiContainer = document.body;
       for (let i = 0; i < confettiCount; i++) {
@@ -42,6 +50,13 @@ const WinnerDialog: React.FC<WinnerDialogProps> = ({ winner, isOpen, onContinue,
       }
     }
   }, [isOpen, soundEnabled, playWinnerSound]);
+
+  const handleGenerateStory = async () => {
+    setIsStoryLoading(true);
+    const newStory = await onGenerateStory();
+    setStory(newStory);
+    setIsStoryLoading(false);
+  };
 
   if (!isOpen) return null;
 
@@ -70,14 +85,34 @@ const WinnerDialog: React.FC<WinnerDialogProps> = ({ winner, isOpen, onContinue,
             <AlertDialogTitle className="text-center text-2xl font-bold">
               We have a winner!
             </AlertDialogTitle>
-            <AlertDialogDescription className="text-center text-4xl font-bold font-headline text-primary py-4">
+            <AlertDialogDescription className="text-center text-4xl font-bold font-headline text-primary py-4 break-words">
               {winner}
             </AlertDialogDescription>
           </AlertDialogHeader>
-          <AlertDialogFooter className="sm:justify-center gap-2">
-            <Button onClick={onRemove}>Remove Winner</Button>
+          
+          {story && (
+            <div className="my-4 p-4 bg-muted/50 rounded-lg text-center">
+              <p className="text-muted-foreground italic">{story}</p>
+            </div>
+          )}
+
+          {!story && (
+            <div className="flex justify-center my-2">
+               <Button onClick={handleGenerateStory} disabled={isStoryLoading} variant="secondary">
+                 {isStoryLoading ? (
+                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                 ) : (
+                   <Sparkles className="mr-2 h-4 w-4" />
+                 )}
+                 {isStoryLoading ? 'Writing...' : 'Generate Story'}
+               </Button>
+            </div>
+          )}
+
+          <AlertDialogFooter className="sm:justify-center gap-2 pt-4">
+            <Button onClick={onRemove}>Remove Winner & Close</Button>
             <Button variant="outline" onClick={onContinue}>
-              Awesome!
+              Close
             </Button>
           </AlertDialogFooter>
         </AlertDialogContent>
