@@ -10,6 +10,7 @@ import { Card, CardContent, CardHeader, CardDescription } from "@/components/ui/
 export const metadata: Metadata = {
   title: 'Frequently Asked Questions | Spin The Wheel',
   description: 'Find answers to common questions about the Spin The Wheel app, including saving lists, item limits, and how the AI suggestions work.',
+  keywords: ['faq', 'spin the wheel questions', 'help', 'support', 'list saving', 'ai suggestions', 'wheel settings'],
 };
 
 export default function FaqPage() {

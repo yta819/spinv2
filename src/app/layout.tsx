@@ -9,6 +9,7 @@ import { version } from '../../package.json';
 export const metadata: Metadata = {
   title: 'Spin The Wheel',
   description: 'A spinning wheel app to make decisions fun.',
+  keywords: ['spinning wheel', 'random picker', 'decision wheel', 'prize wheel', 'raffle wheel', 'giveaway tool', 'random name picker', 'online spinner'],
 };
 
 export default function RootLayout({

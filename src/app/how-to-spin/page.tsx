@@ -5,6 +5,7 @@ import { ListChecks, Palette, Cog, PlayCircle, Trophy } from "lucide-react";
 export const metadata: Metadata = {
   title: 'How to Use Spin The Wheel',
   description: 'A step-by-step guide on how to add items, customize settings, and spin the wheel to get your random winner.',
+  keywords: ['how to use', 'guide', 'tutorial', 'instructions', 'spin the wheel help', 'add items', 'customize wheel', 'get winner'],
 };
 
 export default function HowToSpinPage() {
