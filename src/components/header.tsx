@@ -26,6 +26,9 @@ export default function Header() {
         </Link>
         <nav className="flex items-center gap-4">
           <Button variant="ghost" asChild>
+            <Link href="/blog">Blog</Link>
+          </Button>
+          <Button variant="ghost" asChild>
             <Link href="/how-to-spin">How to Spin</Link>
           </Button>
           <Button variant="ghost" asChild>

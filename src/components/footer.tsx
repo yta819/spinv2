@@ -14,6 +14,9 @@ export default function Footer({ version }: FooterProps) {
         </p>
         <div className="flex items-center gap-2 md:gap-4">
             <Button variant="link" asChild className="text-muted-foreground">
+                <Link href="/blog">Blog</Link>
+            </Button>
+            <Button variant="link" asChild className="text-muted-foreground">
                 <Link href="/how-to-spin">How to Use</Link>
             </Button>
             <Button variant="link" asChild className="text-muted-foreground">
