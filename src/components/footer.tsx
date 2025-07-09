@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { Button } from './ui/button';
 
 interface FooterProps {
   version: string;
@@ -11,9 +12,15 @@ export default function Footer({ version }: FooterProps) {
         <p className="text-sm text-muted-foreground">
           &copy; {new Date().getFullYear()} Spin The Wheel. All rights reserved.
         </p>
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-2 md:gap-4">
+            <Button variant="link" asChild className="text-muted-foreground">
+                <Link href="/how-to-spin">How to Use</Link>
+            </Button>
+            <Button variant="link" asChild className="text-muted-foreground">
+                <Link href="/faq">FAQ</Link>
+            </Button>
             <p className="text-sm text-muted-foreground">
-            v{version}
+                v{version}
             </p>
         </div>
       </div>
