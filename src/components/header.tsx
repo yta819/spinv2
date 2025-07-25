@@ -29,7 +29,7 @@ export default function Header() {
             <Link href="/blog">Blog</Link>
           </Button>
           <Button variant="ghost" asChild>
-            <Link href="/how-to-spin">How to Spin</Link>
+            <Link href="/how-to-spin">How to Use</Link>
           </Button>
           <Button variant="ghost" asChild>
             <Link href="/faq">FAQ</Link>
